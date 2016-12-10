@@ -1,16 +1,14 @@
-// MapAlgorythm.cpp : Defines the entry point for the console application.
+// MapAlgorithm.cpp : Defines the entry point for the console application.
 //
 
 #include "stdafx.h"
 #include <string>
-#include <iostream>
-#include <math.h>																										   
+#include <iostream>																										   
 #include <vector>
-#include <Windows.h>
 
 using namespace std;
 
-enum DIRECTIONS { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3 };
+enum DIRECTIONS { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3 }; // Used to reference the different directions reperesented by integers
 
 class Cell {
 private:
@@ -103,7 +101,7 @@ public:
 		return this->cell_struct[(y * 3) + x];
 	}
 
-	// Used for generation algorythems. Used to determine if the cell has been visited or not.
+	// Used for generation algorithems. Used to determine if the cell has been visited or not.
 	bool _visited = false;
 
 	void Cell::setVisited(bool state) { this->_visited = state; this->cell_struct[4] = '-'; }
@@ -141,9 +139,10 @@ public:
 
 class Map {
 private:
-	unsigned int size_x, size_y;
-	vector< vector<Cell>> map_grid;
+	unsigned int size_x, size_y; // Declaration for the size of the map
+	vector< vector<Cell>> map_grid; // The map itself
 public:
+	// Just a constructer
 	Map::Map(unsigned int sizeX, unsigned int sizeY) {
 		this->size_x = sizeX; this->size_y = sizeY;	  // Set the private fields size_x and size_y to the sepsified parameters.
 		this->map_grid = vector< vector<Cell>>(this->size_y, vector<Cell>(this->size_x));   // Initialize the map_grid with 
@@ -159,14 +158,18 @@ public:
 	}
 	Map::~Map() { cout << "Deleting map!" << endl; }	// Just a destructor
 
-
+	// Returns the cell at a spesified position in the map. (X and Y values)
 	Cell Map::getCellAtPos(int x, int y)
 	{
-		return this->map_grid.at(y).at(x);
+		return this->map_grid.at(y).at(x);	// Using .at() instead of Operator[] to throw exceptions and bypass errors!
 	}
+
+	// Draws an induvidual cell at a spesific point in the grid
 	void Map::drawCellAtPos(int x, int y) {
 		this->map_grid.at(y).at(x).drawCell();	// Draws the cell at a posistion in the map_grid.
 	}
+
+	// Simply draws the hole map and all of it's cell-data
 	void Map::drawMap() {
 		int mapX, mapY, cellRow = 0;  // Initialize the loop-counters. Optional!
 		for (mapY = 0; mapY < this->size_y; mapY++) {   // Loop through map_grid rows
@@ -191,23 +194,30 @@ public:
 	void Map::setCellStructureAtPos(int x, int y, string newCellStruct) {
 		this->map_grid[y][x].setCellStructure(newCellStruct);
 	}
+	
 	void Map::toggleCellSideAtPos(int x, int y, int side, bool state) {
 		this->map_grid[y][x].toggleSide(side, state);
 	}
+	
+	// Marks cell to be visited.
 	void Map::visitCell(int x, int y) {
 		this->map_grid[y][x].setVisited(true);
 	}
-	bool Map::cellVisited(int x, int y) { return this->map_grid.at(y).at(x)._visited; }
+
+	// Checks if the cell is visited.
+	bool Map::cellVisited(int x, int y) { 
+		return this->map_grid.at(y).at(x)._visited;   // Using .at() insted of Operator[] to throw exceptions needed to bypass errors!
+	}
 };
 
 int main()
 {
-	int size_x = 38;
-	int size_y = 40;
+	int size_x = 38;	   // Size of map's width. (Multiply by 3 to get width in chars!)
+	int size_y = 20;	   // Size of map's height. (Multiply by 3 to get height in chars!)
 	// Recommended X-size = 38
 	Map grid = Map(size_x, size_y);
 	// [0] = x; [1] = y
-	int start_pos[2] = { 5,5 }; // Start backtracking from cell [0,3]
+	int start_pos[2] = { 2,2 }; // Start backtracking from cell [0,3]
 
 
 	// Create vector for recursive-backtracking history.
@@ -223,7 +233,7 @@ int main()
 	while (running) {
 		 
 		grid.visitCell(c, r);
-		cout << "Visited: [" << c << "][" << r << "]!\n";
+		cout << "Visited: [" << c << "][" << r << "]   \t|| ";
 
 		vector<int> check;
 		
@@ -261,11 +271,13 @@ int main()
 		catch (const out_of_range& e) { e.what(); }
 		
 		// Choose one of the options!
-		cout << "Avalable options:" << check.size() << endl;
+		cout << "Avalable options:" << check.size() << "   \t|| ";
 		if (check.size() > 0) {
+
 			history.push_back({ c , r });
 			int move_direction = check[rand() % check.size()];	 // Randomly pick a cell! For use of hash-functions, put stuff here!
-			cout << "Moving: " << move_direction << "!\n";
+
+			cout << "Moving:  " << move_direction << "   !!!";
 			if (move_direction == UP)
 			{
 				grid.toggleCellSideAtPos(c, r, UP, true);
@@ -292,16 +304,17 @@ int main()
 		}
 		else {
 			if (history.size() > 1) {
-				cout << "Backtracking!!!" << endl;
+				cout << "Backtracking !!!";
 				history.pop_back();
 				c = history.back().first;
 				r = history.back().second;
 			}
 			else {
-				cout << "DONE!" << endl;
+				cout << "\nDONE!" << endl;
 				running = false;
 			}
 		}
+		cout << endl;
 	}
 
 /* // Cell Debug!
