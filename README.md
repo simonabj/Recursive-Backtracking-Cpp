@@ -1,2 +1,2 @@
-# Recursive-Backtracking-C-
-A program chich generates a perfect maze using the famous recursive backtracking algorythm in c++. 
+# Recursive Backtracking C++
+A program which generates a perfect maze using the famous recursive backtracking algorythm in c++. 
